@@ -28,7 +28,9 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: ./Backend API/simple-api
-          tags: ${{secrets.DOCKERHUB_USERNAME}}/tp-devops-simple-api:latest
+          tags: |
+            ${{secrets.DOCKERHUB_USERNAME}}/tp-devops-simple-api:latest
+            ${{secrets.DOCKERHUB_USERNAME}}/tp-devops-simple-api:1.0.${{ github.run_number }}
           push: true
 
   # ----------------------------------------
@@ -49,7 +51,9 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: ./Database
-          tags: ${{secrets.DOCKERHUB_USERNAME}}/tp-devops-database:latest
+          tags: |
+            ${{secrets.DOCKERHUB_USERNAME}}/tp-devops-database:latest
+            ${{secrets.DOCKERHUB_USERNAME}}/tp-devops-database:1.0.${{ github.run_number }}
           push: true
 
   # ----------------------------------------
@@ -70,5 +74,7 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: ./httpd
-          tags: ${{secrets.DOCKERHUB_USERNAME}}/tp-devops-httpd:latest
+          tags: |
+            ${{secrets.DOCKERHUB_USERNAME}}/tp-devops-httpd:latest
+            ${{secrets.DOCKERHUB_USERNAME}}/tp-devops-httpd:1.0.${{ github.run_number }}
           push: true
