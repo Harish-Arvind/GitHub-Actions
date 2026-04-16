@@ -1,0 +1,25 @@
+# Environments
+.env
+.env.*
+!.env.example
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+._*
+
+# IDEs and Editors
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.vim/
+
+# Docker build
+docker-compose.override.yml
+
+
+target
