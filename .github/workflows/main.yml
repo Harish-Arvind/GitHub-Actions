@@ -32,6 +32,7 @@ jobs:
   # ----------------------------------------
   sonar-analysis:
     name: SonarCloud Analysis
+    needs: test-backend
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
@@ -52,7 +53,7 @@ jobs:
   # ----------------------------------------
   build-and-push-backend:
     name: Push Backend Image
-    needs: [test-backend, sonar-analysis]
+    needs: test-backend
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout code
@@ -73,7 +74,7 @@ jobs:
   # ----------------------------------------
   build-and-push-database:
     name: Push Database Image
-    needs: [test-backend, sonar-analysis]
+    needs: test-backend
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout code
@@ -94,7 +95,7 @@ jobs:
   # ----------------------------------------
   build-and-push-httpd:
     name: Push HTTPD Image
-    needs: [test-backend, sonar-analysis]
+    needs: test-backend
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout code
