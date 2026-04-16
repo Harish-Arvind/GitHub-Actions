@@ -1,59 +1,21 @@
-name: CI devops 2025
+name: CI build-and-push-docker-image
 
 on:
-  push:
+  workflow_run:
+    workflows: ["CI test-backend"]
+    types: 
+      - completed
     branches: 
       - main
-      - develop
-  pull_request:
 
 jobs:
-  # ----------------------------------------
-  # 1. TEST JOB
-  # ----------------------------------------
-  test-backend: 
-    name: Test Backend Code
-    runs-on: ubuntu-24.04
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Set up JDK 21
-        uses: actions/setup-java@v4
-        with:
-          java-version: '21'
-          distribution: 'temurin'
-
-      - name: Build and test with Maven
-        working-directory: "Backend API/simple-api"
-        run: ./mvnw clean verify
-
-  # ----------------------------------------
-  # 2. SONARCLOUD QUALITY GATE JOB
-  # ----------------------------------------
-  sonar-analysis:
-    name: SonarCloud Analysis
-    needs: test-backend
-    runs-on: ubuntu-24.04
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Set up JDK 21
-        uses: actions/setup-java@v4
-        with:
-          java-version: '21'
-          distribution: 'temurin'
-
-      - name: Analyze with SonarCloud
-        working-directory: "Backend API/simple-api"
-        run: ./mvnw -B verify sonar:sonar -Dsonar.projectKey=Harish-Arvind_GitHub-Actions -Dsonar.organization=harish-arvind -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=${{ secrets.SONAR_TOKEN }}
-
-
   # ----------------------------------------
   # 3. BUILD AND PUSH BACKEND DOCKER IMAGE
   # ----------------------------------------
   build-and-push-backend:
     name: Push Backend Image
-    needs: test-backend
+    # Ensures this only runs if the tests actually succeeded (not if they failed or were cancelled)
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout code
@@ -67,14 +29,14 @@ jobs:
         with:
           context: ./Backend API/simple-api
           tags: ${{secrets.DOCKERHUB_USERNAME}}/tp-devops-simple-api:latest
-          push: ${{ github.ref == 'refs/heads/main' }}
+          push: true
 
   # ----------------------------------------
   # 4. BUILD AND PUSH DATABASE DOCKER IMAGE
   # ----------------------------------------
   build-and-push-database:
     name: Push Database Image
-    needs: test-backend
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout code
@@ -88,14 +50,14 @@ jobs:
         with:
           context: ./Database
           tags: ${{secrets.DOCKERHUB_USERNAME}}/tp-devops-database:latest
-          push: ${{ github.ref == 'refs/heads/main' }}
+          push: true
 
   # ----------------------------------------
   # 5. BUILD AND PUSH HTTPD DOCKER IMAGE
   # ----------------------------------------
   build-and-push-httpd:
     name: Push HTTPD Image
-    needs: test-backend
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout code
@@ -109,4 +71,4 @@ jobs:
         with:
           context: ./httpd
           tags: ${{secrets.DOCKERHUB_USERNAME}}/tp-devops-httpd:latest
-          push: ${{ github.ref == 'refs/heads/main' }}
+          push: true
