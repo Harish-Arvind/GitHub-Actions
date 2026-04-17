@@ -46,3 +46,25 @@ jobs:
       - name: Analyze with SonarCloud
         working-directory: "Backend API/simple-api"
         run: ./mvnw -B verify sonar:sonar -Dsonar.projectKey=Harish-Arvind_GitHub-Actions -Dsonar.organization=harish-arvind -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=${{ secrets.SONAR_TOKEN }}
+  # ----------------------------------------
+  # 3. ROLLBACK JOB (On Failure)
+  # ----------------------------------------
+  rollback:
+    name: Automatic Rollback
+    needs: [test-backend]
+    if: failure() && github.event_name == 'push' && !startsWith(github.event.head_commit.message, 'Revert')
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write   # Grants the action permission to write commits
+    steps:
+      - name: Checkout Code containing full history
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Git Revert and Push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git revert HEAD --no-edit
+          git push origin HEAD:${{ github.ref }}
