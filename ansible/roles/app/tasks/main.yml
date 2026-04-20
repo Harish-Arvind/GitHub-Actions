@@ -1,0 +1,15 @@
+---
+- name: Run Backend API container
+  docker_container:
+    name: backend
+    image: harisharvind/tp-devops-simple-api:latest
+    pull: true
+    state: started
+    restart_policy: unless-stopped
+    networks:
+      - name: front-network
+      - name: back-network
+    env:
+      DB_URL: "jdbc:postgresql://database:5432/{{ db_name }}"
+      DB_USERNAME: "{{ db_user }}"
+      DB_PASSWORD: "{{ db_pass }}"

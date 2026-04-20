@@ -1,0 +1,10 @@
+---
+- name: Run Frontend container
+  docker_container:
+    name: front
+    image: harisharvind/tp-devops-front:latest
+    pull: true
+    state: started
+    restart_policy: unless-stopped
+    networks:
+      - name: front-network

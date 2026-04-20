@@ -1,0 +1,10 @@
+---
+- name: Create front-network
+  docker_network:
+    name: front-network
+    state: present
+
+- name: Create back-network
+  docker_network:
+    name: back-network
+    state: present

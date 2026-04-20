@@ -72,3 +72,63 @@ jobs:
           context: ./httpd
           tags: ${{secrets.DOCKERHUB_USERNAME}}/tp-devops-httpd:latest
           push: true
+
+  # ----------------------------------------
+  # 6. BUILD AND PUSH FRONT DOCKER IMAGE
+  # ----------------------------------------
+  build-and-push-front:
+    name: Push Frontend Image
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Login to DockerHub
+        run: echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login --username ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
+
+      - name: Build and push front
+        uses: docker/build-push-action@v6
+        with:
+          context: ./front
+          tags: ${{secrets.DOCKERHUB_USERNAME}}/tp-devops-front:latest
+          push: true
+
+  # ----------------------------------------
+  # 7. DEPLOY TO PRODUCTION (ANSIBLE)
+  # ----------------------------------------
+  deploy-app:
+    name: Deploy to EC2/Server via Ansible
+    needs: [build-and-push-backend, build-and-push-database, build-and-push-httpd, build-and-push-front]
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install SSH Key
+        uses: shimataro/ssh-key-action@v2
+        with:
+          key: ${{ secrets.ANSIBLE_PRIVATE_KEY }}
+          name: id_rsa # optional
+          known_hosts: 'just-a-placeholder-so-we-dont-get-errors'
+          if_key_exists: replace
+
+      - name: Configure SSH known_hosts
+        run: |
+          mkdir -p ~/.ssh
+          ssh-keyscan -H harish-arvind.selvakumar.takima.school >> ~/.ssh/known_hosts
+
+      - name: Run Ansible Playbook
+        uses: dawidd6/action-ansible-playbook@v2
+        with:
+          playbook: deploy_app.yml
+          directory: ansible
+          key: ${{ secrets.ANSIBLE_PRIVATE_KEY }}
+          inventory: |
+            all:
+              vars:
+                ansible_user: admin
+              children:
+                prod:
+                  hosts:
+                    harish-arvind.selvakumar.takima.school:

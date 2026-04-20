@@ -1,0 +1,12 @@
+---
+- name: Run HTTPD Proxy container
+  docker_container:
+    name: httpd
+    image: harisharvind/tp-devops-httpd:latest
+    pull: true
+    state: started
+    restart_policy: unless-stopped
+    ports:
+      - "80:8080"
+    networks:
+      - name: front-network
