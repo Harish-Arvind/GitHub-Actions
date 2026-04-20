@@ -2,6 +2,7 @@
 .env
 .env.*
 !.env.example
+!front/.env.production
 
 # macOS
 .DS_Store
