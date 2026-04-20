@@ -115,17 +115,14 @@ jobs:
         uses: shimataro/ssh-key-action@v2
         with:
           key: ${{ secrets.ANSIBLE_PRIVATE_KEY }}
-          name: id_rsa # optional
-          known_hosts: 'just-a-placeholder-so-we-dont-get-errors'
+          name: id_rsa
+          known_hosts: unnecessary
           if_key_exists: replace
-
-      - name: Configure SSH known_hosts
-        run: |
-          mkdir -p ~/.ssh
-          ssh-keyscan -H harish-arvind.selvakumar.takima.school >> ~/.ssh/known_hosts
 
       - name: Run Ansible Playbook
         uses: dawidd6/action-ansible-playbook@v2
+        env:
+          ANSIBLE_HOST_KEY_CHECKING: "false"
         with:
           playbook: deploy_app.yml
           directory: ansible
