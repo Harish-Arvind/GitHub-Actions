@@ -1,0 +1,100 @@
+name: CI build-and-push-docker-image
+
+on:
+  workflow_run:
+    workflows: ["CI test-backend"]
+    types: 
+      - completed
+    branches: 
+      - main
+
+jobs:
+  # ----------------------------------------
+  # 3. BUILD AND PUSH BACKEND DOCKER IMAGE
+  # ----------------------------------------
+  build-and-push-backend:
+    name: Push Backend Image
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Login to DockerHub
+        run: echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login --username ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
+
+      - name: Build and push backend
+        uses: docker/build-push-action@v6
+        with:
+          context: ./Backend API/simple-api
+          tags: |
+            ${{secrets.DOCKERHUB_USERNAME}}/tp-devops-simple-api:latest
+            ${{secrets.DOCKERHUB_USERNAME}}/tp-devops-simple-api:1.0.${{ github.run_number }}
+          push: true
+
+  # ----------------------------------------
+  # 4. BUILD AND PUSH DATABASE DOCKER IMAGE
+  # ----------------------------------------
+  build-and-push-database:
+    name: Push Database Image
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Login to DockerHub
+        run: echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login --username ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
+
+      - name: Build and push database
+        uses: docker/build-push-action@v6
+        with:
+          context: ./Database
+          tags: |
+            ${{secrets.DOCKERHUB_USERNAME}}/tp-devops-database:latest
+            ${{secrets.DOCKERHUB_USERNAME}}/tp-devops-database:1.0.${{ github.run_number }}
+          push: true
+
+  # ----------------------------------------
+  # 5. BUILD AND PUSH HTTPD DOCKER IMAGE
+  # ----------------------------------------
+  build-and-push-httpd:
+    name: Push HTTPD Image
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Login to DockerHub
+        run: echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login --username ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
+
+      - name: Build and push httpd
+        uses: docker/build-push-action@v6
+        with:
+          context: ./httpd
+          tags: |
+            ${{secrets.DOCKERHUB_USERNAME}}/tp-devops-httpd:latest
+            ${{secrets.DOCKERHUB_USERNAME}}/tp-devops-httpd:1.0.${{ github.run_number }}
+          push: true
+
+  # ----------------------------------------
+  # 6. BUILD AND PUSH FRONT DOCKER IMAGE
+  # ----------------------------------------
+  build-and-push-front:
+    name: Push Frontend Image
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Login to DockerHub
+        run: echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login --username ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
+
+      - name: Build and push front
+        uses: docker/build-push-action@v6
+        with:
+          context: ./front
+          tags: ${{secrets.DOCKERHUB_USERNAME}}/tp-devops-front:latest
+          push: true
