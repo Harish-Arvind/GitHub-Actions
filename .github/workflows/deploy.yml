@@ -1,12 +1,6 @@
 name: CI build-and-push-docker-image
 
 on:
-  workflow_run:
-    workflows: ["CI test-backend"]
-    types: 
-      - completed
-    branches: 
-      - main
   workflow_dispatch:
 
 
@@ -17,7 +11,6 @@ jobs:
   build-and-push-backend:
     name: Push Backend Image
     # Ensures this only runs if the tests actually succeeded (not if they failed or were cancelled)
-    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout code
@@ -40,7 +33,6 @@ jobs:
   # ----------------------------------------
   build-and-push-database:
     name: Push Database Image
-    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout code
@@ -63,7 +55,6 @@ jobs:
   # ----------------------------------------
   build-and-push-httpd:
     name: Push HTTPD Image
-    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout code
@@ -86,7 +77,6 @@ jobs:
   # ----------------------------------------
   build-and-push-front:
     name: Push Frontend Image
-    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout code
