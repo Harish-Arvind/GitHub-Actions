@@ -1,1 +1,6 @@
+[prod]
 harish-arvind.selvakumar.takima.school
+
+[prod:vars]
+ansible_user=admin
+ansible_ssh_private_key_file=/root/.ssh/id_rsa

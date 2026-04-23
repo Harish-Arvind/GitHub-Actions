@@ -4,9 +4,7 @@
   gather_facts: true
   vars:
     ansible_python_interpreter: /usr/bin/python3
-    db_name: db
-    db_user: usr
-    db_pass: pwd
+
   roles:
     - docker
     - network

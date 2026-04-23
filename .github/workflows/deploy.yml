@@ -119,19 +119,15 @@ jobs:
           known_hosts: unnecessary
           if_key_exists: replace
 
-      - name: Run Ansible Playbook
-        uses: dawidd6/action-ansible-playbook@v2
-        env:
-          ANSIBLE_HOST_KEY_CHECKING: "false"
-        with:
-          playbook: deploy_app.yml
-          directory: ansible
-          key: ${{ secrets.ANSIBLE_PRIVATE_KEY }}
-          inventory: |
-            all:
-              vars:
-                ansible_user: admin
-              children:
-                prod:
-                  hosts:
-                    harish-arvind.selvakumar.takima.school:
+      - name: Create Vault Password File
+        run: echo "${{ secrets.VAULT_PASSWORD }}" > ansible/.vault_pass
+
+      - name: Run Ansible (Dockerized)
+        run: |
+          docker run --rm \
+            -v $(pwd)/ansible:/ansible \
+            -v ~/.ssh/id_rsa:/root/.ssh/id_rsa:ro \
+            -e ANSIBLE_HOST_KEY_CHECKING=False \
+            cytopia/ansible:latest-tools \
+            ansible-playbook -i /ansible/hosts /ansible/deploy_app.yml --vault-password-file /ansible/.vault_pass
+
