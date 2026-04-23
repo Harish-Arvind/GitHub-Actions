@@ -1,7 +1,7 @@
 services:
     backend:
         build: ./Backend API/simple-api
-        restart: unless-stopped
+        restart: on-failure:5
         networks:
           - front-network
           - back-network
@@ -15,7 +15,7 @@ services:
 
     database:
         build: ./Database
-        restart: unless-stopped
+        restart: on-failure:5
         networks:
           - back-network
         volumes:
@@ -38,7 +38,10 @@ services:
         networks:
           - front-network
         depends_on:
-          - backend
+          backend:
+            condition: service_started
+          database:
+            condition: service_healthy
 
 networks:
   front-network:
