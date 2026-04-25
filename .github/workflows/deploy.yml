@@ -32,4 +32,4 @@ jobs:
             -v ~/.ssh/id_rsa:/root/.ssh/id_rsa:ro \
             -e ANSIBLE_HOST_KEY_CHECKING=False \
             cytopia/ansible:latest-tools \
-            ansible-playbook -i /ansible/hosts /ansible/deploy_app.yml --vault-password-file /ansible/.vault_pass
+            sh -c "ansible-galaxy install -r /ansible/requirements.yml && ansible-playbook -i /ansible/hosts /ansible/deploy_app.yml --vault-password-file /ansible/.vault_pass"
