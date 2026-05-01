@@ -22,15 +22,15 @@ class DepartmentsServiceTest {
     @Mock
     private DepartmentDAO departmentDAO;
 
-    private final Department DEPARTMENT = Department.builder()
+    private final Department department = Department.builder()
             .id(1L)
             .name("DepartementTest")
             .build();
 
     @Test
     void testGetDepartmentByName() {
-        when(departmentDAO.findDepartmentByName("DepartmentTest")).thenReturn(DEPARTMENT);
-        assertEquals(DEPARTMENT, departmentDAO.findDepartmentByName("DepartmentTest"));
+        when(departmentDAO.findDepartmentByName("DepartmentTest")).thenReturn(department);
+        assertEquals(department, departmentDAO.findDepartmentByName("DepartmentTest"));
     }
 
     @Test

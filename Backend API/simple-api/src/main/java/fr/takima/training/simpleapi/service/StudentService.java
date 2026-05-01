@@ -37,7 +37,7 @@ public class StudentService {
     }
 
     public Student addStudent(Student student) {
-        if (student.getLastname() == null || student.getLastname().length() == 0 || student.getDepartment() == null) {
+        if (student.getLastname() == null || student.getLastname().isEmpty() || student.getDepartment() == null) {
             throw new IllegalArgumentException("You can't add a student without setting a lastname and a department ID");
         }
 
@@ -50,7 +50,7 @@ public class StudentService {
     }
 
     private void validateDepartmentName(String departmentName) {
-        if (departmentName == null || departmentName.length() == 0) {
+        if (departmentName == null || departmentName.isEmpty()) {
             throw new IllegalArgumentException("The department name must not be null or empty.");
         }
     }

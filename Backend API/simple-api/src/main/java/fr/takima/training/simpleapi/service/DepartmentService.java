@@ -17,7 +17,7 @@ public class DepartmentService {
     }
 
     public Department getDepartmentByName(String departmentName) {
-        if (departmentName == null || departmentName.length() == 0) {
+        if (departmentName == null || departmentName.isEmpty()) {
             throw new IllegalArgumentException("The department name must not be null or empty.");
         }
 
