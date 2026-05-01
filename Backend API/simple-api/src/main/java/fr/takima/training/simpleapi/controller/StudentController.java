@@ -1,5 +1,6 @@
 package fr.takima.training.simpleapi.controller;
 
+import fr.takima.training.simpleapi.dto.StudentDto;
 import fr.takima.training.simpleapi.entity.Student;
 import fr.takima.training.simpleapi.service.StudentService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +37,12 @@ public class StudentController {
     }
 
     @PostMapping
-    public ResponseEntity<Object> addStudent(@RequestBody Student student) {
+    public ResponseEntity<Object> addStudent(@RequestBody StudentDto studentDto) {
+        Student student = new Student();
+        student.setFirstname(studentDto.getFirstname());
+        student.setLastname(studentDto.getLastname());
+        student.setDepartment(studentDto.getDepartment());
+
         Student savedStudent;
         try {
             savedStudent = this.studentService.addStudent(student);
@@ -50,13 +56,17 @@ public class StudentController {
     }
 
     @PutMapping(value = "/{id}")
-    public ResponseEntity<Object> updateStudent(@RequestBody Student student, @PathVariable(name="id") long id) {
+    public ResponseEntity<Object> updateStudent(@RequestBody StudentDto studentDto, @PathVariable(name="id") long id) {
         Optional<Student> studentOptional = Optional.ofNullable(studentService.getStudentById(id));
         if (studentOptional.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
 
-        student.setId(id);
+        Student student = studentOptional.get();
+        student.setFirstname(studentDto.getFirstname());
+        student.setLastname(studentDto.getLastname());
+        student.setDepartment(studentDto.getDepartment());
+
         this.studentService.addStudent(student);
         return ResponseEntity.ok(student);
     }

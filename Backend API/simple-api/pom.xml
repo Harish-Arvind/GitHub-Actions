@@ -105,7 +105,7 @@
 					</execution>
 					<execution>
 						<id>post-unit-test</id>
-						<phase>test</phase>
+						<phase>verify</phase>
 						<goals>
 							<goal>report</goal>
 						</goals>
