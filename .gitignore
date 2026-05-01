@@ -25,3 +25,7 @@ docker-compose.override.yml
 
 target
 .vault_pass
+
+# Log files
+*_log.txt
+*.log
