@@ -42,4 +42,12 @@ class DepartmentsServiceTest {
     void testGetDepartmentByNameWithEmptyValue() {
         assertThrows(IllegalArgumentException.class, () -> departmentService.getDepartmentByName(""));
     }
+
+    @Test
+    void testGetDepartments() {
+        java.util.List<fr.takima.training.simpleapi.entity.Department> list = new java.util.ArrayList<>();
+        list.add(department);
+        when(departmentDAO.findAll()).thenReturn(list);
+        assertEquals(list, departmentService.getDepartments());
+    }
 }

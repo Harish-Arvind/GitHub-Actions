@@ -110,4 +110,12 @@ class StudentsServiceTest {
     void testRemoveStudentWithNegativeId() {
         assertThrows(IllegalArgumentException.class, () -> studentService.removeStudentById(-5));
     }
+
+    @Test
+    void testGetAll() {
+        List<Student> students = new ArrayList<>();
+        students.add(student);
+        when(studentDAO.findAll()).thenReturn(students);
+        assertEquals(students, studentService.getAll());
+    }
 }
